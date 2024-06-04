@@ -68,16 +68,7 @@ export default function Home() {
           <Divider className="my-4"></Divider>
           {topics &&
             topics.map((topic) => {
-              return (
-                <>
-                  <TicketTopic
-                    options={[]}
-                    {...topics}
-                    key={topic.id}
-                  ></TicketTopic>
-                  ;
-                </>
-              );
+              return <TicketTopic {...topic} key={topic.id}></TicketTopic>;
             })}
         </main>
       </div>
