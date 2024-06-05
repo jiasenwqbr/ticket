@@ -13,6 +13,7 @@ import {
   Progress,
   Radio,
   RadioGroup,
+  Spacer,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Record } from "@/app/utils/types";
@@ -158,7 +159,8 @@ function TicketTopic(props: Props) {
           </CardFooter>
         </Card>
       </div>
-      <Divider className="my-4" />
+      {/* <Divider className="my-4" /> */}
+      <Spacer y={10} />
     </>
   );
 }

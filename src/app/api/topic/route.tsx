@@ -15,6 +15,11 @@ export async function GET() {
       include: {
         options: true,
       },
+      orderBy: [
+        {
+          id: "desc",
+        },
+      ],
     });
     return NextResponse.json({ topics }, { status: 200 });
   } catch (err) {

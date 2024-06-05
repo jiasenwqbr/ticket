@@ -1,50 +1,46 @@
 "use client";
-import Image from "next/image";
-import { SignUp } from "@clerk/nextjs";
+
 import { UserButton, useAuth, useUser } from "@clerk/nextjs";
-import { Button } from "@nextui-org/button";
-import { ThemeSwitcher } from "./components/ThemeSwitcher";
 import {
-  avatar,
+  Button,
+  Modal,
+  ModalContent,
+  Spacer,
+  useDisclosure,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Textarea,
+  Input,
   Chip,
   Divider,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Spacer,
-  Textarea,
-  useDisclosure,
 } from "@nextui-org/react";
+import { ThemeSwitcher } from "./components/ThemeSwitcher";
 import { FileUp, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CldUploadButton } from "next-cloudinary";
-import { Topic } from "@prisma/client";
+import { Topic } from "@/app/utils/types";
 import TicketTopic from "./components/TicketTopic";
+
 export default function Home() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [content, setContent] = useState("");
-  const [currentOption, setCurrentOption] = useState("");
   const [options, setOptions] = useState<string[]>([]);
+  const [currentOption, setCurrentOption] = useState("");
   const [images, setImages] = useState<string[]>([]);
+
   const [topics, setTopics] = useState<Topic[]>([]);
+
   const { userId } = useAuth();
   const avatar = useUser().user?.imageUrl;
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("qqqqqqqqqqq:", process.env.API_ADDRESS);
-      console.log("qqqqqqqqqqq:", `${process.env.API_ADDRESS}`);
-
-      const result = await fetch("api/topic", {
+      const result = await fetch(`${process.env.API_ADDRESS}/topic`, {
         cache: "no-cache",
         method: "GET",
       });
       const data = await result.json();
-      console.log("🚀 ~ fetchData ~ data:", data);
-
       setTopics(data.topics as Topic[]);
     };
     fetchData();
@@ -53,25 +49,26 @@ export default function Home() {
   return (
     <div>
       <header className="w-full h-14">
-        <div className="fixed top-4 right-8 flex justify-items-stretch items-center">
+        <div className="fixed top-4 right-8 flex justify-stretch items-center">
           <Button color="success" endContent={<Send />} onPress={onOpen}>
             发布
           </Button>
           <Spacer x={4} />
           <ThemeSwitcher />
           <Spacer x={4} />
-          <UserButton />
+          <UserButton afterSignOutUrl="/" />
         </div>
       </header>
       <div className="flex items-center justify-center m-4">
-        <main className="flex flex-col items-center justify-center w-full boder-x-2 sm:w-full md:w-9/12 lg:w-6/12">
-          <Divider className="my-4"></Divider>
+        <main className="flex flex-col items-center justify-center w-full  sm:w-full md:w-9/12 lg:w-6/12">
+          {/* <Divider className="my-4" /> */}
           {topics &&
             topics.map((topic) => {
-              return <TicketTopic {...topic} key={topic.id}></TicketTopic>;
+              return <TicketTopic {...topic} key={topic.id} />;
             })}
         </main>
       </div>
+
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -87,7 +84,7 @@ export default function Home() {
                   labelPlacement="outside"
                   value={content}
                   onValueChange={setContent}
-                ></Textarea>
+                />
                 <Spacer x={2} />
                 <CldUploadButton
                   uploadPreset="ckoqjogd"
@@ -104,10 +101,11 @@ export default function Home() {
                   </button>
                 </CldUploadButton>
                 <Spacer x={2} />
-                <div className="flex gap-2">
+                <div className="flex items-center">
                   <Input
                     label={"输入选项"}
                     variant={"faded"}
+                    size="sm"
                     value={currentOption}
                     onValueChange={setCurrentOption}
                   />
@@ -122,16 +120,16 @@ export default function Home() {
                     添加
                   </Button>
                 </div>
-                <Spacer x={2}></Spacer>
+                <Spacer x={2} />
                 <div className="flex gap-2">
                   {options.map((item, index) => {
                     return (
                       <Chip
                         key={index}
-                        variant="flat"
                         onClose={(e) => {
-                          setOptions(options.filter((i) => i != item));
+                          setOptions(options.filter((i) => i !== item));
                         }}
+                        variant="flat"
                       >
                         {item}
                       </Chip>
@@ -163,6 +161,7 @@ export default function Home() {
                         }),
                       }
                     );
+
                     const data = (await result.json()) as Topic;
                     setTopics([...topics, data]);
                     setContent("");
